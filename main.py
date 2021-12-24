@@ -16,6 +16,7 @@ async def sendLeaderboardUpdate(message_text, leaderboard):
             await message.edit(content=message_text)
         else:
             message = await channel.send(message_text)
+            await message.pin()
             leaderboard.message = message.id
 
 
