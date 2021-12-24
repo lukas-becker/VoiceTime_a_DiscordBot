@@ -61,12 +61,7 @@ class Scoreboard:
             self.scores.pop()
 
     def __str__(self):
-        printString = f"Leaderboard "
-        if self.scoreType:
-            printString = printString + f"längster Aufenthalt: \n"
-        else:
-            printString = printString + f"kürzester Aufenthalt: \n"
-
+        printString = ""
         for i in range(len(self.scores)):
             printString = printString + str(i+1) + ": " + str(self.scores[i]) + f"\n"
         return printString
