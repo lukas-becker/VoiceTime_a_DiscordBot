@@ -38,9 +38,10 @@ class Score:
 class Scoreboard:
     # FALSE = Shortest, TRUE = Longest
 
-    def __init__(self, useType=False):
+    def __init__(self, useType=False, message=None):
         self.scores = []
         self.scoreType = useType
+        self.message = message
 
     def check(self, newTime):
         if len(self.scores) < 5:
@@ -75,4 +76,4 @@ class Scoreboard:
         for score in self.scores:
             tmpScoreboard.append(score.toJson())
 
-        return {self.scoreType: tmpScoreboard}
+        return {self.scoreType: tmpScoreboard, "message": self.message}

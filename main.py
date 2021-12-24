@@ -8,15 +8,16 @@ client = discord.Client()
 pretime_dict = {}
 
 
-async def sendLeaderboardUpdate(message_text, voice_channel):
+async def sendLeaderboardUpdate(message_text, leaderboard):
     for server in client.guilds:
-        if voice_channel in server.channels:
-            for channel in server.text_channels:
-                if channel.name == "voice-speedrun":
-                    reply_channel = channel
-                    break
+        channel = discord.utils.find(lambda c: c.name == "voice-speedrun", server.channels)
+        if leaderboard.message:
+            message = await channel.fetch_message(leaderboard.message)
+            await message.edit(content=message_text)
+        else:
+            message = await channel.send(message_text)
+            leaderboard.message = message.id
 
-    await reply_channel.send(message_text)
 
 def loadLeaderboard(type):
     try:
@@ -36,7 +37,7 @@ def loadLeaderboard(type):
             time = list(tmp_score.values())[0]
             newScore = score.Score(time, member)
             scoreboard.add(newScore)
-
+        scoreboard.message = tmp["message"]
         print("Loaded Scoreboard")
         print(scoreboard)
 
@@ -77,7 +78,7 @@ async def on_voice_state_update(member, before, after):
             message_text += str(leaderboard_shortest)
             message_text += "####"
 
-            await sendLeaderboardUpdate(message_text, before.channel)
+            await sendLeaderboardUpdate(message_text, leaderboard_shortest)
 
             storeLeaderboard(leaderboard_shortest)
 
@@ -91,7 +92,7 @@ async def on_voice_state_update(member, before, after):
             message_text += str(leaderboard_longest)
             message_text += "####"
 
-            await sendLeaderboardUpdate(message_text, before.channel)
+            await sendLeaderboardUpdate(message_text, leaderboard_longest)
 
             storeLeaderboard(leaderboard_longest)
 
