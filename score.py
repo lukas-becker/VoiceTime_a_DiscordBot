@@ -38,7 +38,7 @@ class Score:
 class Scoreboard:
     # FALSE = Shortest, TRUE = Longest
 
-    def __init__(self, useType=False, message=None):
+    def __init__(self, useType=False, message=0):
         self.scores = []
         self.scoreType = useType
         self.message = message
