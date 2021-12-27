@@ -1,0 +1,10 @@
+
+misc/
+
+.idea/
+
+__pycache__/
+
+leaderboard_longest.json
+
+leaderboard_shortest.json
