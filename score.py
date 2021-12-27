@@ -38,9 +38,10 @@ class Score:
 class Scoreboard:
     # FALSE = Shortest, TRUE = Longest
 
-    def __init__(self, useType=False):
+    def __init__(self, useType=False, message=0):
         self.scores = []
         self.scoreType = useType
+        self.message = message
 
     def check(self, newTime):
         if len(self.scores) < 5:
@@ -60,12 +61,7 @@ class Scoreboard:
             self.scores.pop()
 
     def __str__(self):
-        printString = f"Leaderboard "
-        if self.scoreType:
-            printString = printString + f"längster Aufenthalt: \n"
-        else:
-            printString = printString + f"kürzester Aufenthalt: \n"
-
+        printString = ""
         for i in range(len(self.scores)):
             printString = printString + str(i+1) + ": " + str(self.scores[i]) + f"\n"
         return printString
@@ -75,4 +71,4 @@ class Scoreboard:
         for score in self.scores:
             tmpScoreboard.append(score.toJson())
 
-        return {self.scoreType: tmpScoreboard}
+        return {self.scoreType: tmpScoreboard, "message": self.message}

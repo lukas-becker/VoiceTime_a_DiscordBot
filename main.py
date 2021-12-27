@@ -8,15 +8,17 @@ client = discord.Client()
 pretime_dict = {}
 
 
-async def sendLeaderboardUpdate(message_text, voice_channel):
+async def send_leaderboard_update(embed_message, leaderboard):
     for server in client.guilds:
-        if voice_channel in server.channels:
-            for channel in server.text_channels:
-                if channel.name == "voice-speedrun":
-                    reply_channel = channel
-                    break
+        channel = discord.utils.find(lambda c: c.name == "voice-speedrun", server.channels)
+        try:
+            message = await channel.fetch_message(leaderboard.message)
+            await message.edit(embed=embed_message)
+        except discord.NotFound:
+            message = await channel.send(embed=embed_message)
+            await message.pin()
+            leaderboard.message = message.id
 
-    await reply_channel.send(message_text)
 
 def loadLeaderboard(type):
     try:
@@ -36,7 +38,7 @@ def loadLeaderboard(type):
             time = list(tmp_score.values())[0]
             newScore = score.Score(time, member)
             scoreboard.add(newScore)
-
+        scoreboard.message = tmp["message"]
         print("Loaded Scoreboard")
         print(scoreboard)
 
@@ -74,10 +76,11 @@ async def on_voice_state_update(member, before, after):
             message_text = ""
             message_text += f"<@{member.id}> " + " ist in das Leaderboard für kurze Aufenthalte mit einer Zeit von " + str(
                 time_str) + "h in " + str(before.channel) + " aufgenommen worden! \n"
-            message_text += str(leaderboard_shortest)
-            message_text += "####"
-
-            await sendLeaderboardUpdate(message_text, before.channel)
+            embed_msg = discord.Embed(title="Leaderboard kürzester Aufenthalt",
+                                      description=message_text)
+            embed_msg.add_field(name="All time Leaderboard", value=str(leaderboard_shortest))
+            embed_msg.set_footer(text=f"Server: {before.channel.guild.name}")
+            await send_leaderboard_update(embed_msg, leaderboard_shortest)
 
             storeLeaderboard(leaderboard_shortest)
 
@@ -88,10 +91,11 @@ async def on_voice_state_update(member, before, after):
             message_text = ""
             message_text += f"<@{member.id}> " + " ist in das Leaderboard für lange Aufenthalte mit einer Zeit von " + str(
                 time_str) + "h in " + str(before.channel) + " aufgenommen worden! \n"
-            message_text += str(leaderboard_longest)
-            message_text += "####"
-
-            await sendLeaderboardUpdate(message_text, before.channel)
+            embed_msg = discord.Embed(title="Leaderboard längster Aufenthalt",
+                                      description=message_text)
+            embed_msg.add_field(name="All time Leaderboard", value=str(leaderboard_longest))
+            embed_msg.set_footer(text=f"Server: {before.channel.guild.name}")
+            await send_leaderboard_update(embed_msg, leaderboard_longest)
 
             storeLeaderboard(leaderboard_longest)
 
