@@ -158,4 +158,5 @@ async def on_voice_state_update(member, before, after):
         store_guild_data(guilds)
 
 guilds = load_guild_data()
-client.run("Token")
+token_file = yaml.safe_load(open("./misc/token.yml"))
+client.run(token_file['test'])
