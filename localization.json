@@ -1,18 +1,20 @@
 {
   "DE": {
+    "embed_title":  "VoiceTime Leaderboards",
     "title_shortest": "Leaderboard kürzester Aufenthalt",
     "title_longest": "Leaderboard längster Aufenthalt",
-    "lb_type_all_time": "Leaderboard gesamt",
-    "new_entry_shortest": "<@{}> ist in das Leaderboard für kurze Aufenthalte mit einer Zeit von {}h in {} aufgenommen worden. \n",
-    "new_entry_longest": "<@{}> ist in das Leaderboard für lange Aufenthalte mit einer Zeit von {}h in {} aufgenommen worden. \n",
+    "newest_entry_title": "Neuester Eintrag:",
+    "newest_entry_body": "<@{}> wurde mit einer Zeit von {}h in {} aufgenommen",
+    "new_entry_pm": "Hi <@{}>,\nDu wurdest mit einer Zeit von {}h auf dem Server {} in ein Leaderboard aufgenommen.\nGlückwunsch!",
     "server": "Server: "
   },
   "EN": {
+    "embed_title":  "VoiceTime Leaderboards",
     "title_shortest": "Leaderboard shortest stay",
     "title_longest": "Leaderboard longest stay",
-    "lb_type_all_time": "All-Time Leaderboard",
-    "new_entry_shortest": "<@{}> joined the leaderboard for short stays with a time of {}h in {}. \n",
-    "new_entry_longest": "<@{}> joined the leaderboard for long stays with a time of {}h in {}. \n",
+    "newest_entry_title": "Newest entry:",
+    "newest_entry_body": "<@{}> entered with a time of {}h the following: {}",
+    "new_entry_pm": "Hi <@{}>,\nyou joined a leaderboard with a time of {}h on the server {}.\nCongratulations!",
     "server": "Server: "
   }
 }
