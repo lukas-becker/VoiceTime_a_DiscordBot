@@ -8,26 +8,26 @@ class GuildList:
 
     def add(self, new_guild):
         for guild in self.guilds:
-            if new_guild.g_id == guild.g_id:
+            if new_guild.id == guild.id:
                 return
 
         self.guilds.append(new_guild)
 
     def remove(self, guild_to_remove):
         for guild in self.guilds:
-            if guild_to_remove.g_id == guild.g_id:
+            if guild_to_remove.id == guild.g_id:
                 self.guilds.remove(guild)
                 return
 
     def check_guild(self, guild_id):
         for guild in self.guilds:
-            if guild.g_id == guild_id:
+            if guild.id == guild_id:
                 return True
         return False
 
     def get_by_id(self, guild_id):
         for guild in self.guilds:
-            if guild.g_id == guild_id:
+            if guild.id == guild_id:
                 return guild
 
     def to_json(self):

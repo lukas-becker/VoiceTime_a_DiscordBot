@@ -1,34 +1,52 @@
+from Leaderboard import Leaderboard
+from Leaderboard import ResetType
 from Scoreboard import Scoreboard
 
 
 class Guild:
 
-    def __init__(self, guild_name, guild_id, scoreboard_shortest=None, scoreboard_longest=None):
-        self.g_name = guild_name
-        self.g_id = guild_id
-        self.shortest = Scoreboard(use_type=False) if scoreboard_shortest is None else scoreboard_shortest
-        self.longest = Scoreboard(use_type=True) if scoreboard_longest is None else scoreboard_longest
+    def __init__(self, guild_name, guild_id, guild_message=0, guild_leaderboards=[]):
+        self.name = guild_name
+        self.id = guild_id
+        self.message = guild_message
+        self.leaderboards = []
+        if len(guild_leaderboards) == 0:
+            for r_type in ResetType:
+                self.leaderboards.append(Leaderboard(r_type.value))
+        else:
+            self.leaderboards = guild_leaderboards
+        self.latest = None
 
-    def check_shortest(self, time):
-        return self.shortest.check(time)
+    def check(self, score):
+        return_value = False
+        for leaderboard in self.leaderboards:
+            if leaderboard.check(score.timeInSeconds):
+                return_value = True
+        return return_value
 
-    def check_longest(self, time):
-        return self.longest.check(time)
+    def add(self, score):
+        added_to = []
+        for leaderboard in self.leaderboards:
+            tmp = leaderboard.add(score)
+            if tmp is not None:
+                added_to.append(tmp)
 
-    def add_shortest(self, score):
-        return self.shortest.add(score)
-
-    def add_longest(self, score):
-        return self.longest.add(score)
+        self.latest = (score, added_to)
+        return len(added_to) > 0
 
     def to_json(self):
-        return {"name": self.g_name, "id": self.g_id, "shortest": self.shortest.to_json(), "longest": self.longest.to_json()}
+        tmp_leaderboards = []
+        for leaderboard in self.leaderboards:
+            tmp_leaderboards.append(leaderboard.to_json())
+        return {"name": self.name, "id": self.id, "message": self.message, "leaderboards": tmp_leaderboards}
 
     @staticmethod
     def from_json(json):
         name = json['name']
-        id = json['id']
-        shortest = Scoreboard.from_json(json['shortest'])
-        longest = Scoreboard.from_json(json['longest'])
+        gid = json['id']
+        message = json['message']
+        tmp_leaderboards = []
+        for json_leaderboard in json['leaderboards']:
+            tmp_leaderboards.append(Leaderboard.from_json(json_leaderboard))
 
-        return Guild(name, id, shortest, longest)
+        return Guild(name, gid, message, tmp_leaderboards)
