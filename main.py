@@ -4,7 +4,6 @@ import discord
 from Guild import Guild
 from GuildList import GuildList
 from Score import Score
-from Scoreboard import Scoreboard
 import time
 import json
 import yaml
@@ -24,17 +23,20 @@ try:
 except:
     exit(0)
 
+
 # Send or edit message
-async def send_leaderboard_update(embed_message, leaderboard):
-    for server in client.guilds:
-        channel = discord.utils.find(lambda c: c.name == "voice-speedrun", server.channels)
-        try:
-            message = await channel.fetch_message(leaderboard.message)
-            await message.edit(embed=embed_message)
-        except discord.NotFound:
-            message = await channel.send(embed=embed_message)
-            await message.pin()
-            leaderboard.message = message.id
+async def send_leaderboard_update(embed_message, guild, leaderboard):
+    channel = discord.utils.find(lambda c: c.name == "voice-speedrun", guild.channels)
+    if channel is None:
+        channel = await guild.create_text_channel("voice-speedrun")
+    try:
+        message = await channel.fetch_message(leaderboard.message)
+        await message.edit(embed=embed_message)
+    except discord.NotFound:
+        message = await channel.send(embed=embed_message)
+        await message.pin()
+        leaderboard.message = message.id
+
 
 '''
 # load stored leaderboard from file
@@ -113,7 +115,6 @@ def store_guild_data(guilds):
 # Act on people joining or leaving a voice channel
 @client.event
 async def on_voice_state_update(member, before, after):
-
     if before.channel is None:
         pretime_dict[member] = datetime.datetime.now()
     elif after.channel is None:
@@ -129,7 +130,6 @@ async def on_voice_state_update(member, before, after):
             guild = Guild(guild_name, guild_id)
             guilds.add(guild)
 
-
         duration_time = pretime_dict[member] - datetime.datetime.now()
         duration_time_adjusted = int(duration_time.total_seconds()) * -1
 
@@ -142,7 +142,7 @@ async def on_voice_state_update(member, before, after):
             embed_msg = discord.Embed(title=messages['title_shortest'], description=message_text)
             embed_msg.add_field(name=messages['lb_type_all_time'], value=str(guild.shortest))
             embed_msg.set_footer(text=messages['server'] + f"{guild_name}")
-            await send_leaderboard_update(embed_msg, guild.shortest)
+            await send_leaderboard_update(embed_msg, before.channel.guild, guild.shortest)
 
         if guild.check_longest(duration_time_adjusted):
             new_score = Score(duration_time_adjusted, member.id)
@@ -152,8 +152,8 @@ async def on_voice_state_update(member, before, after):
             message_text = messages['new_entry_longest'].format(member.id, str(time_str), str(before.channel))
             embed_msg = discord.Embed(title=messages['title_longest'], description=message_text)
             embed_msg.add_field(name=messages['lb_type_all_time'], value=str(guild.longest))
-            embed_msg.set_footer(text=messages['server'] + f"{before.channel.guild.name}")
-            await send_leaderboard_update(embed_msg, guild.longest)
+            embed_msg.set_footer(text=messages['server'] + f"{guild_name}")
+            await send_leaderboard_update(embed_msg, before.channel.guild, guild.longest)
 
         store_guild_data(guilds)
 
