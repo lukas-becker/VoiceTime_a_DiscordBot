@@ -48,9 +48,9 @@ def store_guild_data(guilds):
 # Act on people joining or leaving a voice channel
 @client.event
 async def on_voice_state_update(member, before, after):
-    if before.channel is None:
+    if before.channel is None or before.channel == before.channel.guild.afk_channel:
         pretime_dict[member] = datetime.datetime.now()
-    elif after.channel is None:
+    elif after.channel is None or after.channel == after.channel.guild.afk_channel:
         if member not in pretime_dict:
             return
 
