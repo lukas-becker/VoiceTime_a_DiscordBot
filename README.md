@@ -33,7 +33,7 @@ Project developed by:
 
 ## License
 
-As of now the decision for a license is not final.
+[GPL-3.0 License](https://github.com/lukas-becker/VoiceTime_a_DiscordBot/blob/master/LICENSE.md)
 
 ## Acknowledgments
 
